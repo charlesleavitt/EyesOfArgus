@@ -1,6 +1,6 @@
 # EyesOfArgus
 A ModSecurity Log Visualizer  
-* Charles Leavitt - cil9957+EyesofArgus@rit.edu  
+* Charles Leavitt - cil9957@rit.edu  
 * Josh Akers  
 * Kortni Sheldon  
 ### Prerequisites: 

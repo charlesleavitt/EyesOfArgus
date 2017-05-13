@@ -4,20 +4,44 @@ from pprint import *
 import webbrowser
 import json
 import re
+import sys
 
-#logpath = "/var/log/"
-#logpath = sys.argv
-logname = "modsec_audit.json"
+def args_init():
+    logpath = "./"
+    logname = "modsec_audit.log"
+    if len(sys.argv) > 1:
+        print sys.argv[1]
+        if sys.argv[1].lower() == 'demo':
+            demo()
+        else:
+            logpath = sys.argv[1]
+            if logpath[:-1] != '/':
+                logpath = logpath + "/"
+    else:
+        print "No Args"
+        logname = "modsec_audit.json"
+
+    logfile = logpath + logname
+    return logfile
+
 # Global Variables:
 jsonArray = []
 outDict = {"name": "flare", "children": []}
 
 """ Function loads ModSecurity logs from a file to an array of JSON objects"""
-def get_log():
-    with open(logname, 'r') as f:
-        for line in f:
-            d = unicode(line.strip('\n'),'iso-8859-15')
-            jsonArray.append(json.loads(d))
+def get_log(logfile):
+    try:
+        with open(logfile, 'r') as f:
+            for line in f:
+                d = unicode(line.strip('\n'),'iso-8859-15')
+                jsonArray.append(json.loads(d))
+    except IOError as e:
+        print e
+        if "Permission" in e.strerror:
+            print 'Please run with the permissions to read the logfile: eg. sudo'
+        else:
+            print 'Please provide a valid ModSecurity logfile path'
+        exit(0)
 
 """Function to iterate through JSON logs, extract data, push it to a JSON structure and write to flare.json"""
 def parse_json():
@@ -56,12 +80,29 @@ def open_webpage():
     # open in a new tab, if possible
     new = 2
     url = "http://127.0.0.1/EyesOfArgus"
+    print "Opening Eyes Of Argus in browser..."
     webbrowser.open(url,new=new)
 
+"""A demo function used if run with argument 'demo' """
+def demo():
+    with open("demo.json", 'r') as f:
+        demo = json.load(f)
+    with open('flare.json', 'w') as fp:
+        json.dump(demo, fp)
+    open_webpage()
+    exit(0)
+
 def main():
+    # handle ars and do setup
+    logfile = args_init()
+
     # bring in the logs
-    get_log()
+    get_log(logfile)
+
+    # Parse each JSON log and create JSON for visualizer
     parse_json()
+
+    # Open web page to display visualizer
     open_webpage()
 
 main()

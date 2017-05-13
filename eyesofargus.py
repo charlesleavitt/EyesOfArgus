@@ -19,9 +19,11 @@ def args_init():
                 logpath = logpath + "/"
     else:
         print "No Args"
-        logname = "modsec_audit.json"
+        logname = "modsec_audit.log"
 
     logfile = logpath + logname
+
+
     return logfile
 
 # Global Variables:
@@ -30,6 +32,7 @@ outDict = {"name": "flare", "children": []}
 
 """ Function loads ModSecurity logs from a file to an array of JSON objects"""
 def get_log(logfile):
+    print logfile
     try:
         with open(logfile, 'r') as f:
             for line in f:

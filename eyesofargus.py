@@ -13,12 +13,13 @@ def args_init():
         print sys.argv[1]
         if sys.argv[1].lower() == 'demo':
             demo()
+        elif sys.argv[1][-4:] == ".log":
+            return sys.argv[1]
         else:
             logpath = sys.argv[1]
             if logpath[:-1] != '/':
                 logpath = logpath + "/"
     else:
-        print "No Args"
         logname = "modsec_audit.log"
 
     logfile = logpath + logname

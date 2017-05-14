@@ -2,7 +2,7 @@
 A ModSecurity Log Visualizer  
 * Charles Leavitt - cil9957@rit.edu  
 * Josh Akers  
-* Kortni Sheldon  
+* Kortni Sheldon  - kms8085@rit.edu
 ### Prerequisites: 
 * This visualization project reads ModSecurity version 2.9.1+ logs in JSON format. This means you need to either have ModSecurity ver 2.9.1+ running with JSON logs using the OWASP rule set or have a copy of a JSON ModSecurity Log 
 * For your convenience a sample log is included

@@ -1,114 +1,153 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<style>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Eyes of Argus</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-.node {
-  cursor: pointer;
-}
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 
-.node:hover {
-  stroke: #000;
-  stroke-width: 1.5px;
-}
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <style>
 
-.node--leaf {
-  fill: white;
-}
+    body {
+      background: dimgray;
+    }
 
-.label {
-  font: 20px "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-weight: bold;
-  text-anchor: middle;
-  text-transform: uppercase;
-}
+    .node {
+      cursor: pointer;
+    }
 
-.label,
-.node--root,
-.node--leaf {
-  pointer-events: none;
-}
+    .node:hover {
+      stroke: #000;
+      stroke-width: 1.5px;
+    }
 
-</style>
+    .node--leaf {
+      fill: white;
+    }
 
-<svg width='700' height='700'></svg>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script>
+    .label {
+      font: 25px "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-weight: bold;
+      text-anchor: middle;
+      text-transform: uppercase;
+    }
 
-var svg = d3.select("svg"),
-    margin = 20,
-    diameter = +svg.attr("width"),
-    g = svg.append("g").attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+    .label,
+    .node--root,
+    .node--leaf {
+      pointer-events: none;
+    }
 
-var color = d3.scaleLinear()
-    .domain([-1, 5])
-    .range(["dimgray", "white"])
-    .interpolate(d3.interpolateHcl);
+    svg {
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
 
-var childColor = d3.scaleLinear()
-    .domain([0, 20])
-    .range(["gold", "red"])
-    .interpolate(d3.interpolateHcl);
+    #key {
+      position: absolute;
+      width: 20%;
+      height: 50%;
+      background-color: white;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
 
-var pack = d3.pack()
-    .size([diameter - margin, diameter - margin])
-    .padding(2);
+    </style>
+    <svg width="960" height="960"></svg>
+    <script>
 
-d3.json("flare.json", function(error, root) {
-  if (error) throw error;
+    var svg = d3.select("svg"),
+        margin = 20,
+        diameter = +svg.attr("width"),
+        g = svg.append("g").attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
 
-  root = d3.hierarchy(root)
-      .sum(function(d) { return d.size; })
-      .sort(function(a, b) { return b.value - a.value; });
+    var color = d3.scaleLinear()
+        .domain([-1, 5])
+        .range(["dimgray", "white"])
+        .interpolate(d3.interpolateHcl);
 
-  var focus = root,
-      nodes = pack(root).descendants(),
-      view;
+    var childColor = d3.scaleLinear()
+        .domain([0, 20000])
+        .range(["gold", "red"])
+        .interpolate(d3.interpolateHcl);
 
-  var circle = g.selectAll("circle")
-    .data(nodes)
-    .enter().append("circle")
-      .attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
-      .style("fill", function(d) { return d.children ? color(d.depth) : childColor(parseInt(d.data.size)); })
-      .on("click", function(d) { if (focus !== d) zoom(d), d3.event.stopPropagation(); });
+    var pack = d3.pack()
+        .size([diameter - margin, diameter - margin])
+        .padding(2);
 
-  var text = g.selectAll("text")
-    .data(nodes)
-    .enter().append("text")
-      .attr("class", "label")
-      .style("fill-opacity", function(d) { return d.parent === root ? 1 : 0; })
-      .style("display", function(d) { return d.parent === root ? "inline" : "none"; })
-      .text(function(d) { return d.data.name; });
+    d3.json("flare.json", function(error, root) {
+      if (error) throw error;
 
-  var node = g.selectAll("circle,text");
+      root = d3.hierarchy(root)
+          .sum(function(d) { return d.size; })
+          .sort(function(a, b) { return b.value - a.value; });
 
-  svg
-      .style("background", color(-1))
-      .on("click", function() { zoom(root); });
+      var focus = root,
+          nodes = pack(root).descendants(),
+          view;
 
-  zoomTo([root.x, root.y, root.r * 2 + margin]);
+      var circle = g.selectAll("circle")
+        .data(nodes)
+        .enter().append("circle")
+          .attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
+          .style("fill", function(d) { return d.children ? color(d.depth) : childColor(parseInt(d.data.size)); })
+          .on("click", function(d) { if (focus !== d) zoom(d), d3.event.stopPropagation(); });
 
-  function zoom(d) {
-    var focus0 = focus; focus = d;
+      var text = g.selectAll("text")
+        .data(nodes)
+        .enter().append("text")
+          .attr("class", "label")
+          .style("fill-opacity", function(d) { return d.parent === root ? 1 : 0; })
+          .style("display", function(d) { return d.parent === root ? "inline" : "none"; })
+          .text(function(d) { return d.data.name; });
 
-    var transition = d3.transition()
-        .duration(d3.event.altKey ? 7500 : 750)
-        .tween("zoom", function(d) {
-          var i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2 + margin]);
-          return function(t) { zoomTo(i(t)); };
-        });
+      var node = g.selectAll("circle,text");
 
-    transition.selectAll("text")
-      .filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
-        .style("fill-opacity", function(d) { return d.parent === focus ? 1 : 0; })
-        .on("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
-        .on("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
-  }
+      svg
+          .style("background", color(-1))
+          .on("click", function() { zoom(root); });
 
-  function zoomTo(v) {
-    var k = diameter / v[2]; view = v;
-    node.attr("transform", function(d) { return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")"; });
-    circle.attr("r", function(d) { return d.r * k; });
-  }
-});
+      zoomTo([root.x, root.y, root.r * 2 + margin]);
 
-</script>
+      function zoom(d) {
+        var focus0 = focus; focus = d;
+
+        var transition = d3.transition()
+            .duration(d3.event.altKey ? 7500 : 750)
+            .tween("zoom", function(d) {
+              var i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2 + margin]);
+              return function(t) { zoomTo(i(t)); };
+            });
+
+        transition.selectAll("text")
+          .filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
+            .style("fill-opacity", function(d) { return d.parent === focus ? 1 : 0; })
+            .on("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
+            .on("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
+      }
+
+      function zoomTo(v) {
+        var k = diameter / v[2]; view = v;
+        node.attr("transform", function(d) { return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")"; });
+        circle.attr("r", function(d) { return d.r * k; });
+      }
+    });
+    </script>
+  </head>
+  <body>
+    <h1>Eyes of Argus</h1>
+    <div id="key">
+
+    </div>
+  </body>
+</html>

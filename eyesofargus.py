@@ -91,8 +91,12 @@ def parse_json():
                                 c['children'].append({"name": ip.group(1), "size": 1})
     print(outDict)
     # dump the new dictionary to the JSON file to be read by visualizer
-    with open('flare.json', 'w') as fp:
-        json.dump(outDict, fp)
+    try:
+        with open('flare.json', 'w') as fp:
+            json.dump(outDict, fp)
+    except Exception as e:
+        print e
+        exit(0)
 
 """Function opens a new tab to the visualizer in the default browser """
 def open_webpage():

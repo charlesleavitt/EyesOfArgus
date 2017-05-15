@@ -19,3 +19,5 @@ To view the ModSecurity log visualization there are two options:
 2. Run as root with the log file path/name as an argument:  
    Eg. "sudo python eyesofargus.py /var/log/modsec_audit.log"
    
+### Note: 
+If you have any permissions errors run the program with "sudo" permissions or recursively change the permissions on the EyesOfArgus directory with: "sudo chmod -R 777 EyesOfArgus" 

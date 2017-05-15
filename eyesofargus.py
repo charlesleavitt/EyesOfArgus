@@ -104,7 +104,7 @@ def open_webpage():
 
 """A demo function used if run with argument 'demo' """
 def demo():
-    with open("demo.json", 'r') as f:
+    with open("demo.json.log", 'r') as f:
         demo = json.load(f)
     with open('flare.json', 'w') as fp:
         json.dump(demo, fp)

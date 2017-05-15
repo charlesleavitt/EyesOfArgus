@@ -1,5 +1,6 @@
-# file: eoa.p
+# file: eyesofargus.py
 # EyesOfArgus : A ModSecurity log Visualizer
+# Author: Charles Leavitt
 from pprint import *
 import webbrowser
 import json
@@ -10,7 +11,7 @@ def args_init():
     logpath = "./"
     logname = "modsec_audit.log"
     if len(sys.argv) > 1:
-        print sys.argv[1]
+        #print sys.argv[1]
         if sys.argv[1].lower() == 'demo':
             demo()
         elif sys.argv[1][-4:] == ".log":
@@ -33,7 +34,6 @@ outDict = {"name": "flare", "children": []}
 
 """ Function loads ModSecurity logs from a file to an array of JSON objects"""
 def get_log(logfile):
-    print logfile
     try:
         with open(logfile, 'r') as f:
             for line in f:
@@ -45,6 +45,10 @@ def get_log(logfile):
             print 'Please run with the permissions to read the logfile: eg. sudo'
         else:
             print 'Please provide a valid ModSecurity logfile path'
+        exit(0)
+    except Exception as e:
+        print e
+        print "Please provide a valid JSON formatted ModSecurity Log"
         exit(0)
 
 """Function to iterate through JSON logs, extract data, push it to a JSON structure and write to flare.json"""

@@ -21,3 +21,4 @@ To view the ModSecurity log visualization there are two options:
    
 ### Note: 
 If you have any permissions errors run the program with "sudo" permissions or recursively change the permissions on the EyesOfArgus directory with: "sudo chmod -R 777 EyesOfArgus"
+A demo of the sample log is here: http://eoa.charlesleavitt.net/ 
